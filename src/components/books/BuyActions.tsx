@@ -4,9 +4,10 @@ import Link from "next/link";
 import { Download, ShieldCheck, ShoppingCart } from "lucide-react";
 import type { Book } from "@/lib/books";
 import { formatUsd } from "@/lib/books";
-import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { useCart } from "@/components/cart/CartProvider";
 
 export function BuyActions({ book }: { book: Book }) {
+  const cart = useCart();
   return (
     <div className="card p-5">
       <div className="flex items-center justify-between gap-4">
@@ -24,15 +25,13 @@ export function BuyActions({ book }: { book: Book }) {
       </div>
 
       <div className="mt-4 grid gap-2">
-        <AddToCartButton
-          slug={book.slug}
+        <button
+          type="button"
           className="btn btn-primary h-12 px-5 text-sm"
-          label={
-            <>
-              <ShoppingCart className="size-4" /> Add to cart
-            </>
-          }
-        />
+          onClick={() => cart.add(book.slug, 1)}
+        >
+          <ShoppingCart className="size-4" /> Add to cart
+        </button>
         <Link href="/checkout" className="btn btn-secondary h-12 px-5 text-sm">
           <Download className="size-4" /> Checkout now
         </Link>

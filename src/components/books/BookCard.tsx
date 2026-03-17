@@ -7,7 +7,7 @@ import type { Book } from "@/lib/books";
 import { formatUsd } from "@/lib/books";
 import { BookCover3D } from "@/components/books/BookCover3D";
 import { Modal } from "@/components/ui/Modal";
-import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { useCart } from "@/components/cart/CartProvider";
 
 function Stars({ value }: { value: number }) {
   const rounded = Math.round(value * 2) / 2;
@@ -35,6 +35,7 @@ export function BookCard({
   book: Book;
   showExcerpt?: boolean;
 }) {
+  const cart = useCart();
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const formats = useMemo(() => book.formats.join(" • "), [book.formats]);
@@ -97,16 +98,14 @@ export function BookCard({
                   <BookOpen className="size-4" />
                   Preview
                 </button>
-                <AddToCartButton
-                  slug={book.slug}
+                <button
+                  type="button"
                   className="btn btn-primary h-11 px-4 text-sm"
-                  label={
-                    <>
-                      <ShoppingCart className="size-4" />
-                      Buy for {formatUsd(book.priceUsd)}
-                    </>
-                  }
-                />
+                  onClick={() => cart.add(book.slug, 1)}
+                >
+                  <ShoppingCart className="size-4" />
+                  Buy for {formatUsd(book.priceUsd)}
+                </button>
                 <Link
                   href={`/books/${book.slug}`}
                   className="btn btn-secondary h-11 px-4 text-sm"
@@ -154,11 +153,16 @@ export function BookCard({
               </ol>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
-              <AddToCartButton
-                slug={book.slug}
+              <button
+                type="button"
                 className="btn btn-primary h-11 px-4 text-sm"
-                label={<>Buy for {formatUsd(book.priceUsd)}</>}
-              />
+                onClick={() => {
+                  cart.add(book.slug, 1);
+                  setPreviewOpen(false);
+                }}
+              >
+                Buy for {formatUsd(book.priceUsd)}
+              </button>
               <a
                 href={`/api/sample?slug=${encodeURIComponent(book.slug)}`}
                 className="btn btn-secondary h-11 px-4 text-sm"

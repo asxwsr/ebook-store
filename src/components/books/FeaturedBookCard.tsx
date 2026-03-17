@@ -5,9 +5,10 @@ import { ArrowRight, ShoppingCart } from "lucide-react";
 import type { Book } from "@/lib/books";
 import { formatUsd } from "@/lib/books";
 import { BookCover3D } from "@/components/books/BookCover3D";
-import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { useCart } from "@/components/cart/CartProvider";
 
 export function FeaturedBookCard({ book }: { book: Book }) {
+  const cart = useCart();
   return (
     <div className="card lift h-full overflow-hidden">
       <div className="relative">
@@ -43,16 +44,14 @@ export function FeaturedBookCard({ book }: { book: Book }) {
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <AddToCartButton
-              slug={book.slug}
+            <button
+              type="button"
               className="btn btn-primary h-11 px-4 text-sm"
-              label={
-                <>
-                  <ShoppingCart className="size-4" />
-                  Buy {formatUsd(book.priceUsd)}
-                </>
-              }
-            />
+              onClick={() => cart.add(book.slug, 1)}
+            >
+              <ShoppingCart className="size-4" />
+              Buy {formatUsd(book.priceUsd)}
+            </button>
             <Link
               href={`/books/${book.slug}`}
               className="btn btn-secondary h-11 px-4 text-sm"
